@@ -2,4 +2,4 @@
 
 ## Running
 
-go run cmd/skeleton/main.go
+go run cmd/goskeleton/main.go
