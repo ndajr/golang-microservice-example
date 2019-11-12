@@ -1,4 +1,4 @@
-package goskeleton
+package app
 
 import (
 	"encoding/json"

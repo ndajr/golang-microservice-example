@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	server "github.com/neemiasjnr/goskeleton/pkg"
+	server "github.com/neemiasjnr/golang-microservice-example/pkg"
 )
 
 func main() {

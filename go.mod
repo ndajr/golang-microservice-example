@@ -1,4 +1,4 @@
-module github.com/neemiasjnr/goskeleton
+module github.com/neemiasjnr/golang-microservice-example
 
 go 1.12
 
