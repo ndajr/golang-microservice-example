@@ -1,0 +1,12 @@
+################
+# Build & Test #
+################
+
+kind: pipeline
+name: run_tests
+steps:
+  - name: server_test
+    image: golang:1.12-alpine
+    commands:
+      - RUN apk add bash ca-certificates git gcc g++ libc-dev
+      - cd pkg && go test ./...
