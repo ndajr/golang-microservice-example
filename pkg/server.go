@@ -1,10 +1,11 @@
-package gotest
+package goskeleton
 
 import (
 	"encoding/json"
 	"fmt"
 	"net/http"
 
+	"github.com/fasterness/cors"
 	"github.com/gorilla/mux"
 )
 
@@ -15,7 +16,7 @@ func New() http.Handler {
 		router: router,
 	}
 	s.routes()
-	return s
+	return cors.New(s)
 }
 
 type server struct {

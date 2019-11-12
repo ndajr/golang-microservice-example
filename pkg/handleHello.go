@@ -1,4 +1,4 @@
-package gotest
+package goskeleton
 
 import (
 	"fmt"

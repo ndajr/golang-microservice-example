@@ -1,4 +1,4 @@
-module github.com/neemiasjnr/gotest
+module github.com/neemiasjnr/goskeleton
 
 go 1.12
 

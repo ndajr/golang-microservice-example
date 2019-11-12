@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	server "github.com/neemiasjnr/gotest/pkg"
+	server "github.com/neemiasjnr/goskeleton/pkg"
 )
 
 func main() {
