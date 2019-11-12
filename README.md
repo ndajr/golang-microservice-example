@@ -1,10 +1,12 @@
-# go-skeleton
+# golang-microservice-example
 
 ## Running
 
-go run cmd/goskeleton/main.go
+```
+go run cmd/app/main.go
+```
 
 ```
 curl --request GET \
-  --url 'http://localhost:8080/hello?name=neemiasjnr'
+  --url 'http://localhost:8080/hello?name=Mate'
 ```
