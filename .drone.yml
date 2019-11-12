@@ -11,7 +11,5 @@ steps:
       - apk add bash ca-certificates git gcc g++ libc-dev
       - cd pkg && go test ./...
     when:
-      branch: "master"
-    event: 
-      - push
-      - pull-request
+      event: push 
+      branch: master
