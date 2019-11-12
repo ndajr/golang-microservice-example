@@ -1,4 +1,4 @@
-package app
+package server
 
 import (
 	"encoding/json"
@@ -12,28 +12,29 @@ import (
 // New : server creation
 func New() http.Handler {
 	router := mux.NewRouter()
-	s := &server{
+	s := &Server{
 		router: router,
 	}
 	s.routes()
 	return cors.New(s)
 }
 
-type server struct {
+// Server : initializing all server dependencies
+type Server struct {
 	router *mux.Router
 }
 
-func (s server) handle(h http.HandlerFunc) http.HandlerFunc {
+func (s Server) handle(h http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		h.ServeHTTP(w, r)
 	})
 }
 
-func (s server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (s Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.router.ServeHTTP(w, r)
 }
 
-func (s server) respond(w http.ResponseWriter, r *http.Request, status int, data interface{}) {
+func (s Server) respond(w http.ResponseWriter, r *http.Request, status int, data interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	if err := json.NewEncoder(w).Encode(data); err != nil {
@@ -41,7 +42,7 @@ func (s server) respond(w http.ResponseWriter, r *http.Request, status int, data
 	}
 }
 
-func (s server) responderr(w http.ResponseWriter, r *http.Request, status int, err error) {
+func (s Server) responderr(w http.ResponseWriter, r *http.Request, status int, err error) {
 	w.WriteHeader(status)
 	var data struct {
 		Error string `json:"error"`
