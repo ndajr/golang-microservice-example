@@ -1,7 +1,7 @@
 .PHONY: run test
 
 run:
-	go run cmd/app/main.go
+	GIT_COMMIT=$$(git rev-parse --short=10 HEAD) go run cmd/app/main.go
 
 test:
 	cd pkg && go test ./... && cd ..

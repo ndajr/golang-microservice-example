@@ -3,7 +3,9 @@ package server
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
+	"time"
 
 	"github.com/fasterness/cors"
 	"github.com/gorilla/mux"
@@ -14,20 +16,19 @@ func New() http.Handler {
 	router := mux.NewRouter()
 	s := &Server{
 		router: router,
+		logger: loggerMiddleware,
 	}
 	s.routes()
 	return cors.New(s)
 }
 
+// HandlerFunc : useful for middleware creation
+type HandlerFunc func(http.HandlerFunc) http.HandlerFunc
+
 // Server : initializing all server dependencies
 type Server struct {
 	router *mux.Router
-}
-
-func (s Server) handle(h http.HandlerFunc) http.HandlerFunc {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		h.ServeHTTP(w, r)
-	})
+	logger func() HandlerFunc
 }
 
 func (s Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -54,5 +55,23 @@ func (s Server) responderr(w http.ResponseWriter, r *http.Request, status int, e
 	}
 	if err := json.NewEncoder(w).Encode(data); err != nil {
 		fmt.Printf("encode response: %s", err)
+	}
+}
+
+func loggerMiddleware() HandlerFunc {
+	return func(next http.HandlerFunc) http.HandlerFunc {
+		return func(w http.ResponseWriter, r *http.Request) {
+			start := time.Now()
+
+			next.ServeHTTP(w, r)
+
+			log.Printf(
+				"%s\t%s\t%s\t%s",
+				r.Method,
+				r.RequestURI,
+				r.Host,
+				time.Since(start),
+			)
+		}
 	}
 }
