@@ -25,7 +25,7 @@ steps:
       event: push 
       branch: master
 
-  - plan-infra:
+  - name: plan-infra
     image: *drone-terraform-image
     role_arn_to_assume: *drone-role
     root_dir: terraform
