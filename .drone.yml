@@ -6,7 +6,7 @@ aliases:
 kind: pipeline
 name: run_tests
 steps:
-  - get-aws-credentials:
+  - name: get-aws-credentials
     image: neemiasjnr/drone-aws-role-auth
     role: *drone-role
     volumes:
