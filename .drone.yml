@@ -23,10 +23,11 @@ name: main
 steps:
   - name: get-aws-credentials
     image: neemiasjnr/drone-aws-role-auth
-    role: *drone-dev-role
-    file: .env
-    credentials:
-      from_env: aws-credentials
+    settings:
+      role: *drone-dev-role
+      file: .env
+      credentials:
+        from_secret: aws_credentials
 
   - name: test
     image: golang:1.12-alpine
