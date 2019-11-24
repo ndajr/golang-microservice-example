@@ -39,11 +39,20 @@ steps:
       branch: master
 
   - name: plan-infra
-    <<: *dev-infra
-    actions:
-      - validate
-      - plan
-    env-file: .env
+    image: *drone-terraform-image
+    settings:
+      tf_version: "0.12.8"
+      vars:
+        docker_image_tag: *docker-image-tag
+      actions:
+        - validate
+        - plan
+      env-file: .env
+      root_dir: terraform
+      init_options:
+        backend-config: [ "config/dev/backend.tfvars" ]
+      var_files: config/dev/terraform.tfvars
+      role_arn_to_assume: *drone-dev-role
     when:
       event: push
       branch:
