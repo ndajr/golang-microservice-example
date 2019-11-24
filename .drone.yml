@@ -1,18 +1,33 @@
 aliases:
-  - &drone-role arn:aws:iam::374047294805:role/automation-drone
+  - &drone-dev-role arn:aws:iam::374047294805:role/automation-drone
   - &docker-image-tag ${DRONE_COMMIT_SHA:0:10}
   - &drone-terraform-image jmccann/drone-terraform:6.0-0.12.6
+  - &infra
+    image: *drone-terraform-image
+    tf_version: "0.12.8"
+    vars: &infra-vars
+      docker_image_tag: *docker-image-tag
+  - &dev-infra
+    <<: *infra
+    root_dir: terraform
+    init_options:
+      backend-config: [ "config/dev/backend.tfvars" ]
+    var_files: config/dev/terraform.tfvars
+    role_arn_to_assume: *drone-dev-role
+    vars:
+      <<: *infra-vars
+      env: dev
 
 kind: pipeline
-name: run_tests
+name: main
 steps:
   - name: get-aws-credentials
     image: neemiasjnr/drone-aws-role-auth
-    role: *drone-role
+    role: *drone-dev-role
     volumes:
       - name: credentials
-        path: /env
-    file: /env/.aws
+        path: $CI_WORKSPACE
+    file: .env
     credentials:
       from_env: aws-credentials
 
@@ -26,18 +41,14 @@ steps:
       branch: master
 
   - name: plan-infra
-    image: *drone-terraform-image
-    role_arn_to_assume: *drone-role
-    root_dir: terraform
-    volumes:
-      - name: credentials
-        path: /env
-    env-file: /env/.aws
-    vars:
-      docker_image_tag: *docker-image-tag
+    <<: *dev-infra
     actions:
       - validate
       - plan
+    env-file: $CI_WORKSPACE/.env
+    volumes:
+      - name: credentials
+        path: $CI_WORKSPACE
     when:
       event: push
       branch:
