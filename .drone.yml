@@ -26,7 +26,7 @@ steps:
     role: *drone-dev-role
     volumes:
       - name: credentials
-        path: $CI_WORKSPACE
+        path: /drone/src
     file: .env
     credentials:
       from_env: aws-credentials
@@ -45,10 +45,10 @@ steps:
     actions:
       - validate
       - plan
-    env-file: $CI_WORKSPACE/.env
+    env-file: /drone/src/.env
     volumes:
       - name: credentials
-        path: $CI_WORKSPACE
+        path: /drone/src
     when:
       event: push
       branch:
