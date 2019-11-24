@@ -1,11 +1,22 @@
-################
-# Build & Test #
-################
+aliases:
+  - &drone-role arn:aws:iam::374047294805:role/automation-drone
+  - &docker-image-tag ${DRONE_COMMIT_SHA:0:10}
+  - &drone-terraform-image jmccann/drone-terraform:6.0-0.12.6
 
 kind: pipeline
 name: run_tests
 steps:
-  - name: server_test
+  - get-aws-credentials:
+    image: neemiasjnr/drone-aws-role-auth
+    role: *drone-dev-role
+    volumes:
+      - name: credentials
+        path: /env
+    file: /env/.aws
+    credentials:
+      from_env: aws-credentials
+
+  - name: test
     image: golang:1.12-alpine
     commands:
       - apk add bash ca-certificates git gcc g++ libc-dev
@@ -13,3 +24,25 @@ steps:
     when:
       event: push 
       branch: master
+
+  - plan-infra:
+    image: *drone-terraform-image
+    role_arn_to_assume: *drone-role
+    root_dir: terraform
+    volumes:
+      - name: credentials
+        path: /env
+    env-file: /env/.aws
+    vars:
+      docker_image_tag: *docker-image-tag
+    actions:
+      - validate
+      - plan
+    when:
+      event: push
+      branch:
+        exclude: master
+
+volumes:
+- name: credentials
+  temp: {}
