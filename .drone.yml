@@ -24,9 +24,6 @@ steps:
   - name: get-aws-credentials
     image: neemiasjnr/drone-aws-role-auth
     role: *drone-dev-role
-    volumes:
-      - name: credentials
-        path: /drone/src
     file: .env
     credentials:
       from_env: aws-credentials
@@ -45,15 +42,8 @@ steps:
     actions:
       - validate
       - plan
-    env-file: /drone/src/.env
-    volumes:
-      - name: credentials
-        path: /drone/src
+    env-file: .env
     when:
       event: push
       branch:
         exclude: master
-
-volumes:
-- name: credentials
-  temp: {}
