@@ -1,7 +1,7 @@
 aliases:
   - &drone-dev-role arn:aws:iam::374047294805:role/automation-drone
   - &docker-image-tag ${DRONE_COMMIT_SHA:0:10}
-  - &drone-terraform-image jmccann/drone-terraform:6.0-0.12.6
+  - &drone-terraform-image jmccann/drone-terraform:6.1-0.12.11
   - &infra
     image: *drone-terraform-image
     tf_version: "0.12.8"
@@ -21,11 +21,6 @@ aliases:
 kind: pipeline
 name: main
 steps:
-  - name: ls
-    image: alpine
-    commands:
-      - ls -la
-
   - name: get-aws-credentials
     image: neemiasjnr/drone-aws-role-auth
     settings:
@@ -43,11 +38,6 @@ steps:
       event: push 
       branch: master
 
-  - name: ls
-    image: alpine
-    commands:
-      - ls -la
-
   - name: plan-infra
     image: *drone-terraform-image
     settings:
@@ -57,11 +47,11 @@ steps:
       actions:
         - validate
         - plan
-      env-file: /drone/src/.env
       root_dir: terraform
       init_options:
         backend-config: [ "config/dev/backend.tfvars" ]
       var_files: config/dev/terraform.tfvars
+      env-file: .env
       role_arn_to_assume: *drone-dev-role
     when:
       event: push
