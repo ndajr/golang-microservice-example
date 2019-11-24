@@ -47,7 +47,7 @@ steps:
       actions:
         - validate
         - plan
-      env-file: .env
+      env-file: /drone/src/.env
       root_dir: terraform
       init_options:
         backend-config: [ "config/dev/backend.tfvars" ]
