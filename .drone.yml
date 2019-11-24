@@ -21,6 +21,11 @@ aliases:
 kind: pipeline
 name: main
 steps:
+  - name: ls
+    image: alpine
+    commands:
+      - ls -la
+
   - name: get-aws-credentials
     image: neemiasjnr/drone-aws-role-auth
     settings:
@@ -37,6 +42,11 @@ steps:
     when:
       event: push 
       branch: master
+
+  - name: ls
+    image: alpine
+    commands:
+      - ls -la
 
   - name: plan-infra
     image: *drone-terraform-image
