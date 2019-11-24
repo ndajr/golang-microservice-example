@@ -8,7 +8,7 @@ name: run_tests
 steps:
   - get-aws-credentials:
     image: neemiasjnr/drone-aws-role-auth
-    role: *drone-dev-role
+    role: *drone-role
     volumes:
       - name: credentials
         path: /env
