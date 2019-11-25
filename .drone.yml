@@ -49,7 +49,7 @@ steps:
       branch:
         exclude: master
 
-  - name: apply-infra
+  - name: apply-infra-deployment
     image: *drone-terraform-image
     settings:
       <<: *infra-settings
@@ -61,10 +61,26 @@ steps:
         - apply
     when:
       event: deployment
+      environment: dev
+
+  - name: apply-infra-master
+    image: *drone-terraform-image
+    settings:
+      <<: *infra-settings
+      vars:
+        <<: *infra-vars
+        env: dev
+      var_files: config/dev/terraform.tfvars
+      actions:
+        - apply
+    when:
+      event: push
+      branch: master
 
 trigger:
   branch:
   - master
+  - fix/*
   - feat/*
   event:
   - push
