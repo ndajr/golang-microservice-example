@@ -26,20 +26,12 @@ steps:
       file: .env
       credentials:
         from_secret: aws_credentials
-    when:
-      event:
-        - push
-        - deployment
 
   - name: test
     image: golang:1.12-alpine
     commands:
       - apk add bash ca-certificates git gcc g++ libc-dev
       - cd pkg && go test ./...
-    when:
-      event:
-        - push
-        - deployment
 
   - name: plan-infra
     image: *drone-terraform-image
@@ -52,7 +44,3 @@ steps:
       actions:
         - validate
         - plan
-    when:
-      event: push
-      branch:
-        exclude: master
