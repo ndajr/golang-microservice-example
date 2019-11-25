@@ -27,8 +27,9 @@ steps:
       credentials:
         from_secret: aws_credentials
     when:
-      event: push 
-      branch: master
+      event:
+        - push
+        - deployment
 
   - name: test
     image: golang:1.12-alpine
@@ -36,8 +37,9 @@ steps:
       - apk add bash ca-certificates git gcc g++ libc-dev
       - cd pkg && go test ./...
     when:
-      event: push 
-      branch: master
+      event:
+        - push
+        - deployment
 
   - name: plan-infra
     image: *drone-terraform-image
