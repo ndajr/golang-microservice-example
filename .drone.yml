@@ -45,6 +45,20 @@ steps:
         - validate
         - plan
 
+  - name: apply-infra
+    image: *drone-terraform-image
+    settings:
+      <<: *infra-settings
+      vars:
+        <<: *infra-vars
+        env: dev
+      var_files: config/dev/terraform.tfvars
+      actions:
+        - validate
+        - plan
+    when:
+      event: deployment
+
 trigger:
   branch:
   - master
