@@ -41,9 +41,6 @@ steps:
         <<: *infra-vars
         env: dev
       var_files: config/dev/terraform.tfvars
-      actions:
-        - validate
-        - plan
     when:
       event: push
       branch:
