@@ -44,6 +44,10 @@ steps:
       actions:
         - validate
         - plan
+    when:
+      event: push
+      branch:
+        exclude: master
 
   - name: apply-infra
     image: *drone-terraform-image
