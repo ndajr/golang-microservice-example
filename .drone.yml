@@ -47,7 +47,8 @@ steps:
     when:
       event: push
       branch:
-        exclude: master
+        exclude: 
+          - master
 
   - name: apply-infra-deployment
     image: *drone-terraform-image
@@ -61,7 +62,8 @@ steps:
         - apply
     when:
       event: deployment
-      environment: dev
+      target: 
+       - dev
 
   - name: apply-infra-master
     image: *drone-terraform-image
