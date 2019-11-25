@@ -55,8 +55,6 @@ steps:
         <<: *infra-vars
         env: dev
       var_files: config/dev/terraform.tfvars
-      actions:
-        - apply
     when:
       event: deployment
       target: 
@@ -70,8 +68,6 @@ steps:
         <<: *infra-vars
         env: dev
       var_files: config/dev/terraform.tfvars
-      actions:
-        - apply
     when:
       event: push
       branch: master
