@@ -48,4 +48,5 @@ steps:
 trigger:
   branch:
   - master
-  - feat/*
+  event:
+  - push
