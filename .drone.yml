@@ -3,21 +3,18 @@ aliases:
   - &docker-image-tag ${DRONE_COMMIT_SHA:0:10}
   # - &drone-terraform-image jmccann/drone-terraform:6.1-0.12.11
   - &drone-terraform-image neemiasjnr/drone-terraform:6.6
+  - &tf_version 0.12.8
   - &infra
     image: *drone-terraform-image
-    tf_version: "0.12.8"
-    vars: &infra-vars
-      docker_image_tag: *docker-image-tag
-  - &dev-infra
-    <<: *infra
-    root_dir: terraform
-    init_options:
-      backend-config: [ "config/dev/backend.tfvars" ]
-    var_files: config/dev/terraform.tfvars
-    role_arn_to_assume: *drone-dev-role
-    vars:
-      <<: *infra-vars
-      env: dev
+    settings: &infra-settings
+      tf_version: *tf_version
+      root_dir: terraform
+      role_arn_to_assume: *drone-dev-role
+      env_file: .env
+      init_options:
+        backend-config: [ "config/dev/backend.tfvars" ]
+      vars: &infra-vars
+        docker_image_tag: *docker-image-tag
 
 kind: pipeline
 name: main
@@ -29,6 +26,9 @@ steps:
       file: .env
       credentials:
         from_secret: aws_credentials
+    when:
+      event: push 
+      branch: master
 
   - name: test
     image: golang:1.12-alpine
@@ -42,18 +42,14 @@ steps:
   - name: plan-infra
     image: *drone-terraform-image
     settings:
-      tf_version: "0.12.8"
+      <<: *infra-settings
       vars:
-        docker_image_tag: *docker-image-tag
+        <<: *infra-vars
+        env: dev
+      var_files: config/dev/terraform.tfvars
       actions:
         - validate
         - plan
-      root_dir: terraform
-      init_options:
-        backend-config: [ "config/dev/backend.tfvars" ]
-      var_files: config/dev/terraform.tfvars
-      env_file: .env
-      role_arn_to_assume: *drone-dev-role
     when:
       event: push
       branch:
