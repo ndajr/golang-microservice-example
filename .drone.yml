@@ -1,7 +1,8 @@
 aliases:
   - &drone-dev-role arn:aws:iam::374047294805:role/automation-drone
   - &docker-image-tag ${DRONE_COMMIT_SHA:0:10}
-  - &drone-terraform-image jmccann/drone-terraform:6.1-0.12.11
+  # - &drone-terraform-image jmccann/drone-terraform:6.1-0.12.11
+  - &drone-terraform-image neemiasjnr/drone-terraform:6.2
   - &infra
     image: *drone-terraform-image
     tf_version: "0.12.8"
@@ -51,7 +52,7 @@ steps:
       init_options:
         backend-config: [ "config/dev/backend.tfvars" ]
       var_files: config/dev/terraform.tfvars
-      env-file: .env
+      env_file: .env
       role_arn_to_assume: *drone-dev-role
     when:
       event: push
