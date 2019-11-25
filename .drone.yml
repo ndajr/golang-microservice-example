@@ -2,7 +2,7 @@ aliases:
   - &drone-dev-role arn:aws:iam::374047294805:role/automation-drone
   - &docker-image-tag ${DRONE_COMMIT_SHA:0:10}
   # - &drone-terraform-image jmccann/drone-terraform:6.1-0.12.11
-  - &drone-terraform-image neemiasjnr/drone-terraform:6.2
+  - &drone-terraform-image neemiasjnr/drone-terraform:6.3
   - &infra
     image: *drone-terraform-image
     tf_version: "0.12.8"
