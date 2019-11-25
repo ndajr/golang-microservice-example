@@ -54,8 +54,7 @@ steps:
         env: dev
       var_files: config/dev/terraform.tfvars
       actions:
-        - validate
-        - plan
+        - apply
     when:
       event: deployment
 
