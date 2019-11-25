@@ -1,15 +1,70 @@
-################
-# Build & Test #
-################
+aliases:
+  - &drone-dev-role arn:aws:iam::374047294805:role/automation-drone
+  - &docker-image-tag ${DRONE_COMMIT_SHA:0:10}
+  # - &drone-terraform-image jmccann/drone-terraform:6.1-0.12.11
+  - &drone-terraform-image neemiasjnr/drone-terraform:6.6
+  - &tf_version 0.12.8
+  - &infra
+    image: *drone-terraform-image
+    settings: &infra-settings
+      tf_version: *tf_version
+      root_dir: terraform
+      role_arn_to_assume: *drone-dev-role
+      env_file: .env
+      init_options:
+        backend-config: [ "config/dev/backend.tfvars" ]
+      vars: &infra-vars
+        docker_image_tag: *docker-image-tag
 
 kind: pipeline
-name: run_tests
+name: main
 steps:
-  - name: server_test
+  - name: get-aws-credentials
+    image: neemiasjnr/drone-aws-role-auth
+    settings:
+      role: *drone-dev-role
+      file: .env
+      credentials:
+        from_secret: aws_credentials
+
+  - name: test
     image: golang:1.12-alpine
     commands:
       - apk add bash ca-certificates git gcc g++ libc-dev
       - cd pkg && go test ./...
+
+  - name: plan-infra
+    image: *drone-terraform-image
+    settings:
+      <<: *infra-settings
+      vars:
+        <<: *infra-vars
+        env: dev
+      var_files: config/dev/terraform.tfvars
+      actions:
+        - validate
+        - plan
     when:
-      event: push 
-      branch: master
+      event: push
+      branch:
+        exclude: master
+
+  - name: apply-infra
+    image: *drone-terraform-image
+    settings:
+      <<: *infra-settings
+      vars:
+        <<: *infra-vars
+        env: dev
+      var_files: config/dev/terraform.tfvars
+      actions:
+        - apply
+    when:
+      event: deployment
+
+trigger:
+  branch:
+  - master
+  - feat/*
+  event:
+  - push

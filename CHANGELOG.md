@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Terraform init
 - Dockerfile to build the app container 
 - Drone CI for the continuous integration
 - Unit tests
