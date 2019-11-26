@@ -1,5 +1,7 @@
 # golang-microservice-example
 
+[![Build Status](https://cloud.drone.io/api/badges/neemiasjnr/golang-microservice-example/status.svg)](https://cloud.drone.io/neemiasjnr/golang-microservice-example)
+
 ## Running
 
 ```
