@@ -27,7 +27,7 @@ steps:
       file_format: dotenv
     environment:
       PLUGIN_CREDENTIALS:
-        from_secret: aws_credentials
+        from_secret: aws_credentials 
 
   - name: test
     image: golang:1.12-alpine
